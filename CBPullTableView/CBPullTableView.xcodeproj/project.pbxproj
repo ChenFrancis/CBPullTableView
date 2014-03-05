@@ -24,6 +24,11 @@
 		C5B25C7C18C71CAC00468814 /* Main1.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C5B25C7B18C71CAC00468814 /* Main1.storyboard */; };
 		C5B25C8018C71E5F00468814 /* PullViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C5B25C7E18C71E5F00468814 /* PullViewController.m */; };
 		C5B25C8118C71E5F00468814 /* PullViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C5B25C7F18C71E5F00468814 /* PullViewController.xib */; };
+		C5B25C8918C724A400468814 /* blueArrowDown.png in Resources */ = {isa = PBXBuildFile; fileRef = C5B25C8318C724A400468814 /* blueArrowDown.png */; };
+		C5B25C8A18C724A400468814 /* blueArrowDown@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C5B25C8418C724A400468814 /* blueArrowDown@2x.png */; };
+		C5B25C8B18C724A400468814 /* blueArrowUp.png in Resources */ = {isa = PBXBuildFile; fileRef = C5B25C8518C724A400468814 /* blueArrowUp.png */; };
+		C5B25C8C18C724A400468814 /* blueArrowUp@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C5B25C8618C724A400468814 /* blueArrowUp@2x.png */; };
+		C5B25C8D18C724A400468814 /* CBPullTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = C5B25C8818C724A400468814 /* CBPullTableView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +65,12 @@
 		C5B25C7D18C71E5F00468814 /* PullViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PullViewController.h; sourceTree = "<group>"; };
 		C5B25C7E18C71E5F00468814 /* PullViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PullViewController.m; sourceTree = "<group>"; };
 		C5B25C7F18C71E5F00468814 /* PullViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PullViewController.xib; sourceTree = "<group>"; };
+		C5B25C8318C724A400468814 /* blueArrowDown.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blueArrowDown.png; sourceTree = "<group>"; };
+		C5B25C8418C724A400468814 /* blueArrowDown@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blueArrowDown@2x.png"; sourceTree = "<group>"; };
+		C5B25C8518C724A400468814 /* blueArrowUp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blueArrowUp.png; sourceTree = "<group>"; };
+		C5B25C8618C724A400468814 /* blueArrowUp@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blueArrowUp@2x.png"; sourceTree = "<group>"; };
+		C5B25C8718C724A400468814 /* CBPullTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBPullTableView.h; sourceTree = "<group>"; };
+		C5B25C8818C724A400468814 /* CBPullTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CBPullTableView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +130,7 @@
 		C5B25C4C18C71C5100468814 /* CBPullTableView */ = {
 			isa = PBXGroup;
 			children = (
+				C5B25C8218C724A400468814 /* CBPullTableView */,
 				C5B25C5518C71C5100468814 /* AppDelegate.h */,
 				C5B25C5618C71C5100468814 /* AppDelegate.m */,
 				C5B25C5818C71C5100468814 /* Main.storyboard */,
@@ -161,6 +173,19 @@
 				C5B25C6E18C71C5100468814 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		C5B25C8218C724A400468814 /* CBPullTableView */ = {
+			isa = PBXGroup;
+			children = (
+				C5B25C8318C724A400468814 /* blueArrowDown.png */,
+				C5B25C8418C724A400468814 /* blueArrowDown@2x.png */,
+				C5B25C8518C724A400468814 /* blueArrowUp.png */,
+				C5B25C8618C724A400468814 /* blueArrowUp@2x.png */,
+				C5B25C8718C724A400468814 /* CBPullTableView.h */,
+				C5B25C8818C724A400468814 /* CBPullTableView.m */,
+			);
+			path = CBPullTableView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -240,10 +265,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				C5B25C5F18C71C5100468814 /* Images.xcassets in Resources */,
+				C5B25C8918C724A400468814 /* blueArrowDown.png in Resources */,
+				C5B25C8B18C724A400468814 /* blueArrowUp.png in Resources */,
 				C5B25C7C18C71CAC00468814 /* Main1.storyboard in Resources */,
+				C5B25C8A18C724A400468814 /* blueArrowDown@2x.png in Resources */,
 				C5B25C5118C71C5100468814 /* InfoPlist.strings in Resources */,
 				C5B25C5A18C71C5100468814 /* Main.storyboard in Resources */,
 				C5B25C8118C71E5F00468814 /* PullViewController.xib in Resources */,
+				C5B25C8C18C724A400468814 /* blueArrowUp@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -266,6 +295,7 @@
 				C5B25C5718C71C5100468814 /* AppDelegate.m in Sources */,
 				C5B25C5318C71C5100468814 /* main.m in Sources */,
 				C5B25C8018C71E5F00468814 /* PullViewController.m in Sources */,
+				C5B25C8D18C724A400468814 /* CBPullTableView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -474,6 +504,7 @@
 				C5B25C7718C71C5200468814 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C5B25C7818C71C5200468814 /* Build configuration list for PBXNativeTarget "CBPullTableViewTests" */ = {
 			isa = XCConfigurationList;
@@ -482,6 +513,7 @@
 				C5B25C7A18C71C5200468814 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
