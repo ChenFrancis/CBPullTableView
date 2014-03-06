@@ -305,7 +305,16 @@
 {
     _lblRefresh.text = kPULL_DOWN_REFRESH;
     _lblLoad.text = kPULL_UP_LOADMORE;
-    _pullState = PullStateNormal;
+    
+    if (PullStateHitTheEnd == _pullState)
+    {
+        
+    }
+    else
+    {
+        _pullState = PullStateNormal;
+    }
+    
     
     if (offset.y < _offsetY || offset.y > scrollView.contentSize.height-CGRectGetHeight(scrollView.frame))
     {// 处于contentSize范围外
