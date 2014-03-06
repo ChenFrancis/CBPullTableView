@@ -27,7 +27,7 @@ typedef enum {
     PullStateNormal = 0,
     PullStateRefresh = 1,
     PullStateLoading = 2
-//    PullStateHitTheEnd = 3
+    //    PullStateHitTheEnd = 3
 } PullState;
 
 @interface CBPullTableView ()
@@ -72,8 +72,8 @@ typedef enum {
         _pullState = PullStateNormal;
         _isRefreshing = NO;
         
-//        NSLog(@"常规减速率：%f, 快速减速率：%f", UIScrollViewDecelerationRateNormal, UIScrollViewDecelerationRateFast);
-//        self.decelerationRate = UIScrollViewDecelerationRateFast;
+        //        NSLog(@"常规减速率：%f, 快速减速率：%f", UIScrollViewDecelerationRateNormal, UIScrollViewDecelerationRateFast);
+        //        self.decelerationRate = UIScrollViewDecelerationRateFast;
         
         [self initUI];
         [self setUIFrame];
@@ -168,39 +168,60 @@ typedef enum {
     
     if (offset.y < _refreshOffsetY-kArrowGap*2)// 下拉刷新
     {
+        _lblRefresh.text = kRELEASE_REFRESH;
+        _pullState = PullStateRefresh;
+        
+        _layerRefresh.hidden = NO;
+        _lblLoad.hidden = NO;
+        
+        scrollView.decelerationRate = 0.5;
+        
         [CATransaction begin];
         [CATransaction setAnimationDuration:kOFFSET_AnimateDuration];
         _layerRefresh.transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);
         [CATransaction commit];
-        
-        _lblRefresh.text = kRELEASE_REFRESH;
-        _pullState = PullStateRefresh;
-        
-        scrollView.decelerationRate = 0.5;
     }
     else if (offset.y > loadOffsetY)// 上拉加载更多
     {
+        _lblLoad.text = kRELEASE_LOADMORE;
+        _pullState = PullStateLoading;
+        
+        _layerLoad.hidden = NO;
+        _lblLoad.hidden = NO;
+        
+        scrollView.decelerationRate = 0.5;
+        
         [CATransaction begin];
         [CATransaction setAnimationDuration:kOFFSET_AnimateDuration];
         _layerLoad.transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);
         [CATransaction commit];
-        
-        _lblLoad.text = kRELEASE_LOADMORE;
-        _pullState = PullStateLoading;
-        
-        scrollView.decelerationRate = 0.5;
     }
     else
     {
+        _lblRefresh.text = kPULL_DOWN_REFRESH;
+        _lblLoad.text = kPULL_UP_LOADMORE;
+        _pullState = PullStateNormal;
+        
+        if (offset.y < _offsetY || offset.y > scrollView.contentSize.height-CGRectGetHeight(scrollView.frame))
+        {
+            _layerRefresh.hidden = NO;
+            _layerLoad.hidden = NO;
+            _lblRefresh.hidden = NO;
+            _lblLoad.hidden = NO;
+        }
+        else
+        {
+            _layerRefresh.hidden = YES;
+            _layerLoad.hidden = YES;
+            _lblRefresh.hidden = YES;
+            _lblLoad.hidden = YES;
+        }
+        
         [CATransaction begin];
         [CATransaction setAnimationDuration:kOFFSET_AnimateDuration];
         _layerRefresh.transform = CATransform3DIdentity;
         _layerLoad.transform = CATransform3DIdentity;
         [CATransaction commit];
-        
-        _lblRefresh.text = kPULL_DOWN_REFRESH;
-        _lblLoad.text = kPULL_UP_LOADMORE;
-        _pullState = PullStateNormal;
         
         scrollView.decelerationRate = UIScrollViewDecelerationRateNormal;
     }
@@ -223,9 +244,9 @@ typedef enum {
             _lblRefresh.text = kREFRESHING;
             
             scrollView.contentInset = UIEdgeInsetsMake(-_refreshOffsetY+1+kArrowGap*2, 0, 0, 0);
-
+            
         } completion:^(BOOL finished) {
-
+            
             if (self.cbPullTableViewDelegate && [self.cbPullTableViewDelegate respondsToSelector:@selector(cbPullTableDidStartRefresh:)])
             {
                 [self.cbPullTableViewDelegate cbPullTableDidStartRefresh:self];
@@ -246,7 +267,7 @@ typedef enum {
             _lblLoad.text = kLOADING;
             
             scrollView.contentInset = UIEdgeInsetsMake(0, 0, kLoad_OFFSET_Y+1+kArrowGap*2, 0);
-
+            
         } completion:^(BOOL finished) {
             if (self.cbPullTableViewDelegate && [self.cbPullTableViewDelegate respondsToSelector:@selector(cbPullTableDidStartLoad:)])
             {
@@ -264,13 +285,18 @@ typedef enum {
     
     // 设置箭头的 y坐标
     CGRect layerRect = _layerLoad.frame;
-    layerRect.origin.y = self.contentSize.height+kArrowGap;
+    if (self.contentSize.height < 1)
+    {
+        layerRect.origin.y = self.frame.size.height+kArrowGap;
+    }
+    else
+    {
+        layerRect.origin.y = self.contentSize.height+kArrowGap;
+    }
     _layerLoad.frame = layerRect;
     
     // 设置Label的 y坐标
     _lblLoad.center = CGPointMake(_lblLoad.center.x, CGRectGetMidY(_layerLoad.frame));
-    
-    [self performSelector:@selector(displayUI) withObject:nil afterDelay:1];
 }
 
 #pragma mark - Custom Method
@@ -279,7 +305,7 @@ typedef enum {
     [UIView animateWithDuration:kOFFSET_AnimateDuration animations:^{
         self.contentInset = UIEdgeInsetsMake(-_offsetY, 0, 0, 0);
         _pullState = PullStateNormal;
-
+        
     } completion:^(BOOL finished) {
         _isRefreshing = NO;
         
@@ -295,7 +321,7 @@ typedef enum {
     [UIView animateWithDuration:kOFFSET_AnimateDuration animations:^{
         self.contentInset = UIEdgeInsetsMake(-_offsetY, 0, 0, 0);
         _pullState = PullStateNormal;
-
+        
     } completion:^(BOOL finished) {
         _isRefreshing = NO;
         
@@ -304,15 +330,6 @@ typedef enum {
         
         _layerLoad.hidden = NO;
     }];
-}
-
-- (void)displayUI
-{
-    _lblRefresh.hidden = NO;
-    _lblLoad.hidden = NO;
-    
-//    _layerRefresh.hidden = NO;
-    _layerLoad.hidden = NO;
 }
 
 @end
