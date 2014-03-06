@@ -1,27 +1,25 @@
 //
-//  PullViewController.m
+//  AutoViewController.m
 //  CBPullTableView
 //
-//  Created by xychen on 14-3-5.
+//  Created by xychen on 14-3-6.
 //  Copyright (c) 2014年 CB. All rights reserved.
 //
 
-#import "PullViewController.h"
-
-#import "CBPullTableView.h"
 #import "AutoViewController.h"
 
-@interface PullViewController () <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, CBPullTableViewDelegate>
+#import "CBPullTableView.h"
+
+@interface AutoViewController () <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, CBPullTableViewDelegate>
 {
     NSArray *_arrayData;
 }
 
 @property (strong, nonatomic) CBPullTableView *tbData;
-@property (strong, nonatomic) AutoViewController *autoVC;
 
 @end
 
-@implementation PullViewController
+@implementation AutoViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -38,12 +36,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    self.title = @"上拉下拉";
-    
     self.view.backgroundColor = [UIColor colorWithRed:(246.0f / 255.0f) green:(246.0f / 255.0f) blue:(246.0f / 255.0f) alpha:1.0];
     
-    UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithTitle:@"自动加载" style:UIBarButtonItemStylePlain target:self action:@selector(showAutoLoadTableAction:)];
-    self.navigationItem.rightBarButtonItem = buttonItem;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -54,6 +48,7 @@
         _tbData = [[CBPullTableView alloc] initWithFrame:tbRect];
         [self.view addSubview:_tbData];
         
+        _tbData.isAutoLoading = YES;// 自动加载更多
         _tbData.dataSource = self;
         _tbData.delegate = self;
         _tbData.cbPullTableViewDelegate = self;
@@ -71,14 +66,21 @@
 #pragma mark - UITableViewDataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return _arrayData.count;
+    if (0 == _arrayData.count)
+    {
+        return 0;
+    }
+    else
+    {
+        return _arrayData.count+1;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *cellIdentifier = @"CellIdentifier";
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    UITableViewCell *cell = nil;
     
     if (nil == cell)
     {
@@ -86,7 +88,21 @@
     }
     
     cell.backgroundColor = [UIColor lightGrayColor];
-    cell.textLabel.text = [NSString stringWithFormat:@"第%@行", [_arrayData objectAtIndex:indexPath.row]];
+    if (indexPath.row < _arrayData.count)
+    {
+        cell.textLabel.text = [NSString stringWithFormat:@"第%@行", [_arrayData objectAtIndex:indexPath.row]];
+        cell.textLabel.backgroundColor = [UIColor clearColor];
+    }
+    else// 最后一行
+    {
+        cell.textLabel.text = @"正在加载...";
+        cell.textLabel.textAlignment = UITextAlignmentCenter;
+        cell.textLabel.backgroundColor = [UIColor clearColor];
+        UIActivityIndicatorView *activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        activityView.center = CGPointMake(100, 35);
+        [activityView startAnimating];
+        [cell addSubview:activityView];
+    }
     
     return cell;
 }
@@ -165,15 +181,6 @@
     [_tbData tableViewDidFinishedLoading];
 }
 
-#pragma mark - ButtonAction
-- (IBAction)showAutoLoadTableAction:(id)sender
-{
-    UIBarButtonItem *buttonItem = (UIBarButtonItem *)sender;
-    
-    _autoVC = [[AutoViewController alloc] initWithNibName:@"AutoViewController" bundle:nil];
-    _autoVC.title = buttonItem.title;
-    _autoVC.navigationItem.backBarButtonItem.title = self.title;
-    [self.navigationController pushViewController:_autoVC animated:YES];
-}
+
 
 @end

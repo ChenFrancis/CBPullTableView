@@ -71,6 +71,7 @@ typedef enum {
         _isHaveOffsetY = NO;
         _pullState = PullStateNormal;
         _isRefreshing = NO;
+        _isAutoLoading = NO;// 自动加载更多。YES:自动加载；NO:拖动加载。默认为拖动加载
         
         //        NSLog(@"常规减速率：%f, 快速减速率：%f", UIScrollViewDecelerationRateNormal, UIScrollViewDecelerationRateFast);
         //        self.decelerationRate = UIScrollViewDecelerationRateFast;
@@ -164,68 +165,70 @@ typedef enum {
     
     CGPoint offset = scrollView.contentOffset;
     
-    CGFloat loadOffsetY = scrollView.contentSize.height + kLoad_OFFSET_Y + kArrowGap*2 - CGRectGetHeight(scrollView.frame);
-    
-    if (offset.y < _refreshOffsetY-kArrowGap*2)// 下拉刷新
-    {
-        _lblRefresh.text = kRELEASE_REFRESH;
-        _pullState = PullStateRefresh;
-        
-        _layerRefresh.hidden = NO;
-        _lblLoad.hidden = NO;
-        
-        scrollView.decelerationRate = 0.5;
-        
-        [CATransaction begin];
-        [CATransaction setAnimationDuration:kOFFSET_AnimateDuration];
-        _layerRefresh.transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);
-        [CATransaction commit];
-    }
-    else if (offset.y > loadOffsetY)// 上拉加载更多
-    {
-        _lblLoad.text = kRELEASE_LOADMORE;
-        _pullState = PullStateLoading;
-        
-        _layerLoad.hidden = NO;
-        _lblLoad.hidden = NO;
-        
-        scrollView.decelerationRate = 0.5;
-        
-        [CATransaction begin];
-        [CATransaction setAnimationDuration:kOFFSET_AnimateDuration];
-        _layerLoad.transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);
-        [CATransaction commit];
-    }
-    else
-    {
-        _lblRefresh.text = kPULL_DOWN_REFRESH;
-        _lblLoad.text = kPULL_UP_LOADMORE;
-        _pullState = PullStateNormal;
-        
-        if (offset.y < _offsetY || offset.y > scrollView.contentSize.height-CGRectGetHeight(scrollView.frame))
+    if (offset.y < _offsetY)
+    {// 超出第一行的顶部
+        if (offset.y < _refreshOffsetY-kArrowGap*2)// 下拉刷新
         {
+            _lblRefresh.text = kRELEASE_REFRESH;
+            _pullState = PullStateRefresh;
+            
             _layerRefresh.hidden = NO;
-            _layerLoad.hidden = NO;
-            _lblRefresh.hidden = NO;
             _lblLoad.hidden = NO;
+            
+            scrollView.decelerationRate = 0.5;
+            
+            [CATransaction begin];
+            [CATransaction setAnimationDuration:kOFFSET_AnimateDuration];
+            _layerRefresh.transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);
+            [CATransaction commit];
         }
         else
         {
-            _layerRefresh.hidden = YES;
-            _layerLoad.hidden = YES;
-            _lblRefresh.hidden = YES;
-            _lblLoad.hidden = YES;
+            [self tableViewNormalStatusWithContentOffset:offset scrollView:scrollView];
         }
-        
-        [CATransaction begin];
-        [CATransaction setAnimationDuration:kOFFSET_AnimateDuration];
-        _layerRefresh.transform = CATransform3DIdentity;
-        _layerLoad.transform = CATransform3DIdentity;
-        [CATransaction commit];
-        
-        scrollView.decelerationRate = UIScrollViewDecelerationRateNormal;
     }
-    
+    else if (scrollView.contentSize.height > 0 && offset.y > scrollView.contentSize.height-CGRectGetHeight(scrollView.frame))
+    {// 超出最后一行的底部
+        if (_isAutoLoading)// 自动加载
+        {
+            if (!_isRefreshing)
+            {
+                _isRefreshing = YES;
+                if (self.cbPullTableViewDelegate && [self.cbPullTableViewDelegate respondsToSelector:@selector(cbPullTableDidStartLoad:)])
+                {
+                    [self.cbPullTableViewDelegate cbPullTableDidStartLoad:self];
+                }
+            }
+        }
+        else
+        {
+            CGFloat loadOffsetY = scrollView.contentSize.height + kLoad_OFFSET_Y + kArrowGap*2 - CGRectGetHeight(scrollView.frame);
+            
+            if (offset.y > loadOffsetY)// 上拉加载更多
+            {
+                _lblLoad.text = kRELEASE_LOADMORE;
+                _pullState = PullStateLoading;
+                
+                _layerLoad.hidden = NO;
+                _lblLoad.hidden = NO;
+                
+                scrollView.decelerationRate = 0.5;
+                
+                [CATransaction begin];
+                [CATransaction setAnimationDuration:kOFFSET_AnimateDuration];
+                _layerLoad.transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);
+                [CATransaction commit];
+            }
+            else
+            {
+                [self tableViewNormalStatusWithContentOffset:offset scrollView:scrollView];
+            }
+        }
+    }
+    else
+    {// 没有超出Cell的范围
+        [self tableViewNormalStatusWithContentOffset:offset scrollView:scrollView];
+    }
 }
 
 - (void)tableViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
@@ -300,6 +303,37 @@ typedef enum {
 }
 
 #pragma mark - Custom Method
+// tableView处于常规状态时
+- (void)tableViewNormalStatusWithContentOffset:(CGPoint)offset scrollView:(UIScrollView *)scrollView
+{
+    _lblRefresh.text = kPULL_DOWN_REFRESH;
+    _lblLoad.text = kPULL_UP_LOADMORE;
+    _pullState = PullStateNormal;
+    
+    if (offset.y < _offsetY || offset.y > scrollView.contentSize.height-CGRectGetHeight(scrollView.frame))
+    {
+        _layerRefresh.hidden = NO;
+        _layerLoad.hidden = NO;
+        _lblRefresh.hidden = NO;
+        _lblLoad.hidden = NO;
+    }
+    else
+    {
+        _layerRefresh.hidden = YES;
+        _layerLoad.hidden = YES;
+        _lblRefresh.hidden = YES;
+        _lblLoad.hidden = YES;
+    }
+    
+    [CATransaction begin];
+    [CATransaction setAnimationDuration:kOFFSET_AnimateDuration];
+    _layerRefresh.transform = CATransform3DIdentity;
+    _layerLoad.transform = CATransform3DIdentity;
+    [CATransaction commit];
+    
+    scrollView.decelerationRate = UIScrollViewDecelerationRateNormal;
+}
+
 - (void)tableViewDidFinishedRefreshing
 {
     [UIView animateWithDuration:kOFFSET_AnimateDuration animations:^{

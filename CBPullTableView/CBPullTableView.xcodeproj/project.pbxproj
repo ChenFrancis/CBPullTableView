@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C5AFC84818C83C2900796055 /* AutoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C5AFC84618C83C2900796055 /* AutoViewController.m */; };
+		C5AFC84918C83C2900796055 /* AutoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C5AFC84718C83C2900796055 /* AutoViewController.xib */; };
 		C5B25C4718C71C5100468814 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C5B25C4618C71C5100468814 /* Foundation.framework */; };
 		C5B25C4918C71C5100468814 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C5B25C4818C71C5100468814 /* CoreGraphics.framework */; };
 		C5B25C4B18C71C5100468814 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C5B25C4A18C71C5100468814 /* UIKit.framework */; };
@@ -42,6 +44,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C5AFC84518C83C2900796055 /* AutoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoViewController.h; sourceTree = "<group>"; };
+		C5AFC84618C83C2900796055 /* AutoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutoViewController.m; sourceTree = "<group>"; };
+		C5AFC84718C83C2900796055 /* AutoViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AutoViewController.xib; sourceTree = "<group>"; };
 		C5B25C4318C71C5100468814 /* CBPullTableView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CBPullTableView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5B25C4618C71C5100468814 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		C5B25C4818C71C5100468814 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -142,6 +147,9 @@
 				C5B25C7D18C71E5F00468814 /* PullViewController.h */,
 				C5B25C7E18C71E5F00468814 /* PullViewController.m */,
 				C5B25C7F18C71E5F00468814 /* PullViewController.xib */,
+				C5AFC84518C83C2900796055 /* AutoViewController.h */,
+				C5AFC84618C83C2900796055 /* AutoViewController.m */,
+				C5AFC84718C83C2900796055 /* AutoViewController.xib */,
 			);
 			path = CBPullTableView;
 			sourceTree = "<group>";
@@ -273,6 +281,7 @@
 				C5B25C5A18C71C5100468814 /* Main.storyboard in Resources */,
 				C5B25C8118C71E5F00468814 /* PullViewController.xib in Resources */,
 				C5B25C8C18C724A400468814 /* blueArrowUp@2x.png in Resources */,
+				C5AFC84918C83C2900796055 /* AutoViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -292,6 +301,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C5B25C5D18C71C5100468814 /* ViewController.m in Sources */,
+				C5AFC84818C83C2900796055 /* AutoViewController.m in Sources */,
 				C5B25C5718C71C5100468814 /* AppDelegate.m in Sources */,
 				C5B25C5318C71C5100468814 /* main.m in Sources */,
 				C5B25C8018C71E5F00468814 /* PullViewController.m in Sources */,

@@ -13,6 +13,7 @@
 @interface CBPullTableView : UITableView
 
 @property (strong,nonatomic) id <CBPullTableViewDelegate> cbPullTableViewDelegate;
+@property (nonatomic) BOOL isAutoLoading;
 @property (nonatomic) BOOL isRefreshing;
 
 - (void)tableViewDidScroll:(UIScrollView *)scrollView;
