@@ -186,7 +186,7 @@
     if (_arrayData.count < everyTimeCount*3)// 大于3页，则不再加载
     {
         NSMutableArray *newArr = [[NSMutableArray alloc] initWithArray:_arrayData];
-        for (int i = 1; i < (10+1); i++)
+        for (int i = 1; i < (everyTimeCount+1); i++)
         {
             NSString *str = [NSString stringWithFormat:@"%d", _arrayData.count+i];
             [newArr addObject:str];
