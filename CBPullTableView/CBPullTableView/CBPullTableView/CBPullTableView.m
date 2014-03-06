@@ -23,13 +23,6 @@
 
 #define kOFFSET_AnimateDuration .18f
 
-typedef enum {
-    PullStateNormal = 0,
-    PullStateRefresh = 1,
-    PullStateLoading = 2
-    //    PullStateHitTheEnd = 3
-} PullState;
-
 @interface CBPullTableView ()
 {
     
@@ -46,8 +39,6 @@ typedef enum {
 @property (strong, nonatomic) CALayer *layerLoad;
 
 @property (strong, nonatomic) UIActivityIndicatorView *activityView;
-
-@property (nonatomic) PullState pullState;
 
 @end
 
@@ -189,6 +180,12 @@ typedef enum {
     }
     else if (scrollView.contentSize.height > 0 && offset.y > scrollView.contentSize.height-CGRectGetHeight(scrollView.frame))
     {// 超出最后一行的底部
+        if (PullStateHitTheEnd == _pullState)
+        {
+            [self tableViewDidHitTheEnd];
+            return;
+        }
+        
         if (_isAutoLoading)// 自动加载
         {
             if (!_isRefreshing)
@@ -311,14 +308,24 @@ typedef enum {
     _pullState = PullStateNormal;
     
     if (offset.y < _offsetY || offset.y > scrollView.contentSize.height-CGRectGetHeight(scrollView.frame))
-    {
+    {// 处于contentSize范围外
         _layerRefresh.hidden = NO;
-        _layerLoad.hidden = NO;
         _lblRefresh.hidden = NO;
-        _lblLoad.hidden = NO;
+        
+        if (PullStateHitTheEnd == _pullState)
+        {
+            _layerLoad.hidden = YES;
+            _lblLoad.hidden = YES;
+        }
+        else
+        {
+            _layerLoad.hidden = NO;
+            _lblLoad.hidden = NO;
+        }
+        
     }
     else
-    {
+    {// 处于contentSize范围内
         _layerRefresh.hidden = YES;
         _layerLoad.hidden = YES;
         _lblRefresh.hidden = YES;
@@ -334,6 +341,8 @@ typedef enum {
     scrollView.decelerationRate = UIScrollViewDecelerationRateNormal;
 }
 
+#pragma mark - CBPullTableViewDelegate
+// 完成刷新，还原tableView的位置
 - (void)tableViewDidFinishedRefreshing
 {
     [UIView animateWithDuration:kOFFSET_AnimateDuration animations:^{
@@ -350,6 +359,7 @@ typedef enum {
     }];
 }
 
+// 完成加载
 - (void)tableViewDidFinishedLoading
 {
     [UIView animateWithDuration:kOFFSET_AnimateDuration animations:^{
@@ -363,6 +373,29 @@ typedef enum {
         [_activityView stopAnimating];
         
         _layerLoad.hidden = NO;
+    }];
+}
+
+// 已经是最后一页
+- (void)tableViewDidHitTheEnd
+{
+    [UIView animateWithDuration:kOFFSET_AnimateDuration animations:^{
+        self.contentInset = UIEdgeInsetsMake(-_offsetY, 0, 0, 0);
+        _pullState = PullStateHitTheEnd;
+        
+    } completion:^(BOOL finished) {
+        _isRefreshing = NO;
+        
+        _activityView.hidden = YES;
+        [_activityView stopAnimating];
+        
+        _layerLoad.hidden = YES;
+        _lblLoad.hidden = YES;
+        
+        if (self.cbPullTableViewDelegate && [self.cbPullTableViewDelegate respondsToSelector:@selector(cbPullTableDidHitTheEnd:)])
+        {
+            [self.cbPullTableViewDelegate cbPullTableDidHitTheEnd:self];
+        }
     }];
 }
 

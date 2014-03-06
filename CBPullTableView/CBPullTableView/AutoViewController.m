@@ -95,13 +95,20 @@
     }
     else// 最后一行
     {
-        cell.textLabel.text = @"正在加载...";
+        if (PullStateHitTheEnd == _tbData.pullState)
+        {
+            cell.textLabel.text = @"已经是最后一页了";
+        }
+        else
+        {
+            cell.textLabel.text = @"正在加载...";
+            UIActivityIndicatorView *activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+            activityView.center = CGPointMake(100, 35);
+            [activityView startAnimating];
+            [cell addSubview:activityView];
+        }
         cell.textLabel.textAlignment = UITextAlignmentCenter;
         cell.textLabel.backgroundColor = [UIColor clearColor];
-        UIActivityIndicatorView *activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-        activityView.center = CGPointMake(100, 35);
-        [activityView startAnimating];
-        [cell addSubview:activityView];
     }
     
     return cell;
@@ -150,6 +157,12 @@
     [self performSelector:@selector(getLoadMoreData) withObject:nil afterDelay:1.f];
 }
 
+// 已经是最后一页
+- (void)cbPullTableDidHitTheEnd:(CBPullTableView *)tableView
+{
+    [_tbData reloadData];
+}
+
 #pragma mark - Refresh/Load Data
 - (void)getRefreshData
 {
@@ -168,17 +181,26 @@
 
 - (void)getLoadMoreData
 {
-    NSMutableArray *newArr = [[NSMutableArray alloc] initWithArray:_arrayData];
-    for (int i = 1; i < 11; i++)
+    int everyTimeCount = 10;
+    
+    if (_arrayData.count < everyTimeCount*3)// 大于3页，则不再加载
     {
-        NSString *str = [NSString stringWithFormat:@"%d", _arrayData.count+i];
-        [newArr addObject:str];
+        NSMutableArray *newArr = [[NSMutableArray alloc] initWithArray:_arrayData];
+        for (int i = 1; i < (10+1); i++)
+        {
+            NSString *str = [NSString stringWithFormat:@"%d", _arrayData.count+i];
+            [newArr addObject:str];
+        }
+        
+        _arrayData = [[NSArray alloc] initWithArray:newArr];
+        [_tbData reloadData];
+        
+        [_tbData tableViewDidFinishedLoading];
     }
-    
-    _arrayData = [[NSArray alloc] initWithArray:newArr];
-    [_tbData reloadData];
-    
-    [_tbData tableViewDidFinishedLoading];
+    else
+    {
+        [_tbData tableViewDidHitTheEnd];
+    }
 }
 
 

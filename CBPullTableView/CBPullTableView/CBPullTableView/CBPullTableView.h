@@ -10,11 +10,19 @@
 
 @protocol CBPullTableViewDelegate;
 
+typedef enum {
+    PullStateNormal = 0,
+    PullStateRefresh = 1,
+    PullStateLoading = 2,
+    PullStateHitTheEnd = 3
+} PullState;
+
 @interface CBPullTableView : UITableView
 
 @property (strong,nonatomic) id <CBPullTableViewDelegate> cbPullTableViewDelegate;
 @property (nonatomic) BOOL isAutoLoading;
 @property (nonatomic) BOOL isRefreshing;
+@property (nonatomic) PullState pullState;
 
 - (void)tableViewDidScroll:(UIScrollView *)scrollView;
 
@@ -24,6 +32,8 @@
 - (void)tableViewDidFinishedRefreshing;
 // 完成加载
 - (void)tableViewDidFinishedLoading;
+// 已经是最后一页
+- (void)tableViewDidHitTheEnd;
 
 
 @end
@@ -37,5 +47,7 @@
 @optional
 // 已经开始加载
 - (void)cbPullTableDidStartLoad:(CBPullTableView *)tableView;
+// 已经是最后一页
+- (void)cbPullTableDidHitTheEnd:(CBPullTableView *)tableView;
 
 @end
