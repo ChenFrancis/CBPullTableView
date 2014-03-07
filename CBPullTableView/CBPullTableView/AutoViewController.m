@@ -95,17 +95,17 @@
     }
     else// 最后一行
     {
-        if (PullStateHitTheEnd == _tbData.pullState)
-        {
-            cell.textLabel.text = @"已经是最后一页了";
-        }
-        else
+        if (PullStateHitTheEnd != _tbData.pullState)
         {
             cell.textLabel.text = @"正在加载...";
             UIActivityIndicatorView *activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
             activityView.center = CGPointMake(100, 35);
             [activityView startAnimating];
             [cell addSubview:activityView];
+        }
+        else
+        {
+            cell.textLabel.text = @"已经是最后一页了";
         }
         cell.textLabel.textAlignment = UITextAlignmentCenter;
         cell.textLabel.backgroundColor = [UIColor clearColor];
@@ -161,6 +161,7 @@
 - (void)cbPullTableDidHitTheEnd:(CBPullTableView *)tableView
 {
     [_tbData reloadData];
+    _tbData.pullState = PullStateHitTheEnd;// 必须在刷新之后再设置这个状态
 }
 
 #pragma mark - Refresh/Load Data

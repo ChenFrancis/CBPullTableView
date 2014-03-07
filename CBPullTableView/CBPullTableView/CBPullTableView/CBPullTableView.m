@@ -21,7 +21,8 @@
 #define kLoad_OFFSET_Y       64
 #define kArrowGap            5// 箭头到列表间距
 
-#define kOFFSET_AnimateDuration .18f
+//#define kOFFSET_AnimateDuration .18f
+#define kOFFSET_AnimateDuration 0.2
 
 @interface CBPullTableView ()
 {
@@ -281,22 +282,25 @@
 #pragma mark - Overwrite
 - (void)reloadData
 {
-    [super reloadData];
-    
-    // 设置箭头的 y坐标
-    CGRect layerRect = _layerLoad.frame;
-    if (self.contentSize.height < 1)
+    if (PullStateHitTheEnd != _pullState)
     {
-        layerRect.origin.y = self.frame.size.height+kArrowGap;
+        [super reloadData];
+        
+        // 设置箭头的 y坐标
+        CGRect layerRect = _layerLoad.frame;
+        if (self.contentSize.height < 1)
+        {
+            layerRect.origin.y = self.frame.size.height+kArrowGap;
+        }
+        else
+        {
+            layerRect.origin.y = self.contentSize.height+kArrowGap;
+        }
+        _layerLoad.frame = layerRect;
+        
+        // 设置Label的 y坐标
+        _lblLoad.center = CGPointMake(_lblLoad.center.x, CGRectGetMidY(_layerLoad.frame));
     }
-    else
-    {
-        layerRect.origin.y = self.contentSize.height+kArrowGap;
-    }
-    _layerLoad.frame = layerRect;
-    
-    // 设置Label的 y坐标
-    _lblLoad.center = CGPointMake(_lblLoad.center.x, CGRectGetMidY(_layerLoad.frame));
 }
 
 #pragma mark - Custom Method
@@ -390,7 +394,7 @@
 {
     [UIView animateWithDuration:kOFFSET_AnimateDuration animations:^{
         self.contentInset = UIEdgeInsetsMake(-_offsetY, 0, 0, 0);
-        _pullState = PullStateHitTheEnd;
+        
         
     } completion:^(BOOL finished) {
         _isRefreshing = NO;
