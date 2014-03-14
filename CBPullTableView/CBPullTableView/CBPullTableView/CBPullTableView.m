@@ -124,25 +124,25 @@
     // 刷新箭头的frame
     CGRect layerRect = CGRectMake(layerOriginX, -(layerHeight+kArrowGap), layerWidth, layerHeight);
     _layerRefresh.frame = layerRect;
-    _layerRefresh.hidden = YES;
     
     // 进度条指示器的frame
     _activityView.center = CGPointMake(CGRectGetMidX(layerRect), CGRectGetMidY(layerRect));
     
     // 加载箭头的frame
     _layerLoad.frame = CGRectMake(layerOriginX, 0, layerWidth, layerHeight);// 坐标随意设置，在reloadData时调整坐标
-    _layerLoad.hidden = YES;
+    
+    [self isHiddenHeadView:YES];
     
     CGFloat lblHeight = 40;
     
     // 刷新Label的frame
     _lblRefresh.frame = CGRectMake(0, 0, CGRectGetWidth(self.frame), lblHeight);
     _lblRefresh.center = CGPointMake(_lblRefresh.center.x, CGRectGetMidY(_layerRefresh.frame));
-    _lblRefresh.hidden = YES;
     
     // 加载Label的frame
     _lblLoad.frame = CGRectMake(0, 0, CGRectGetWidth(self.frame), lblHeight);// 坐标随意设置，在reloadData时调整坐标
-    _lblLoad.hidden = YES;
+    
+    [self isHiddenFootView:YES];
     
 }
 
@@ -207,8 +207,7 @@
                 _lblLoad.text = kRELEASE_LOADMORE;
                 _pullState = PullStateLoading;
                 
-                _layerLoad.hidden = NO;
-                _lblLoad.hidden = NO;
+                [self isHiddenFootView:NO];
                 
                 scrollView.decelerationRate = 0.5;
                 
@@ -304,6 +303,20 @@
 }
 
 #pragma mark - Custom Method
+// 显示/隐藏头部
+- (void)isHiddenHeadView:(BOOL)isShow
+{
+    self.layerRefresh.hidden = isShow;
+    self.lblRefresh.hidden = isShow;
+}
+
+// 隐藏底部
+- (void)isHiddenFootView:(BOOL)isShow
+{
+    self.layerLoad.hidden = isShow;
+    self.lblLoad.hidden = isShow;
+}
+
 // tableView处于常规状态时
 - (void)tableViewNormalStatusWithContentOffset:(CGPoint)offset scrollView:(UIScrollView *)scrollView
 {
@@ -322,27 +335,22 @@
     
     if (offset.y < _offsetY || offset.y > scrollView.contentSize.height-CGRectGetHeight(scrollView.frame))
     {// 处于contentSize范围外
-        _layerRefresh.hidden = NO;
-        _lblRefresh.hidden = NO;
+        [self isHiddenHeadView:NO];
         
         if (PullStateHitTheEnd == _pullState)
         {
-            _layerLoad.hidden = YES;
-            _lblLoad.hidden = YES;
+            [self isHiddenFootView:YES];
         }
         else
         {
-            _layerLoad.hidden = NO;
-            _lblLoad.hidden = NO;
+            [self isHiddenFootView:NO];
         }
         
     }
     else
     {// 处于contentSize范围内
-        _layerRefresh.hidden = YES;
-        _layerLoad.hidden = YES;
-        _lblRefresh.hidden = YES;
-        _lblLoad.hidden = YES;
+        [self isHiddenHeadView:YES];
+        [self isHiddenFootView:YES];
     }
     
     [CATransaction begin];
@@ -402,8 +410,7 @@
         _activityView.hidden = YES;
         [_activityView stopAnimating];
         
-        _layerLoad.hidden = YES;
-        _lblLoad.hidden = YES;
+        [self isHiddenFootView:YES];
         
         if (self.cbPullTableViewDelegate && [self.cbPullTableViewDelegate respondsToSelector:@selector(cbPullTableDidHitTheEnd:)])
         {
