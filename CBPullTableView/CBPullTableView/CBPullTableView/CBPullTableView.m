@@ -63,6 +63,7 @@
         _isHaveOffsetY = NO;
         _pullState = PullStateNormal;
         _isRefreshing = NO;
+        _isHitTheEnd = NO;
         _isAutoLoading = NO;// 自动加载更多。YES:自动加载；NO:拖动加载。默认为拖动加载
         
         //        NSLog(@"常规减速率：%f, 快速减速率：%f", UIScrollViewDecelerationRateNormal, UIScrollViewDecelerationRateFast);
@@ -165,7 +166,6 @@
             _pullState = PullStateRefresh;
             
             _layerRefresh.hidden = NO;
-            _lblLoad.hidden = NO;
             
             scrollView.decelerationRate = 0.5;
             
@@ -275,6 +275,10 @@
             }
         }];
     }
+    else
+    {
+        
+    }
     
 }
 
@@ -325,7 +329,7 @@
     
     if (PullStateHitTheEnd == _pullState)
     {
-        
+        _isHitTheEnd = YES;
     }
     else
     {
@@ -337,7 +341,7 @@
     {// 处于contentSize范围外
         [self isHiddenHeadView:NO];
         
-        if (PullStateHitTheEnd == _pullState)
+        if (_isHitTheEnd)
         {
             [self isHiddenFootView:YES];
         }
@@ -373,6 +377,9 @@
     } completion:^(BOOL finished) {
         _isRefreshing = NO;
         
+        _isHitTheEnd = NO;
+        [self isHiddenFootView:NO];
+        
         _activityView.hidden = YES;
         [_activityView stopAnimating];
         
@@ -389,6 +396,9 @@
         
     } completion:^(BOOL finished) {
         _isRefreshing = NO;
+        
+        _isHitTheEnd = NO;
+        [self isHiddenFootView:NO];
         
         _activityView.hidden = YES;
         [_activityView stopAnimating];
@@ -407,10 +417,11 @@
     } completion:^(BOOL finished) {
         _isRefreshing = NO;
         
+        _isHitTheEnd = YES;
+        [self isHiddenFootView:YES];
+        
         _activityView.hidden = YES;
         [_activityView stopAnimating];
-        
-        [self isHiddenFootView:YES];
         
         if (self.cbPullTableViewDelegate && [self.cbPullTableViewDelegate respondsToSelector:@selector(cbPullTableDidHitTheEnd:)])
         {

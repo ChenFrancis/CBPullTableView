@@ -22,6 +22,7 @@ typedef enum {
 @property (strong,nonatomic) id <CBPullTableViewDelegate> cbPullTableViewDelegate;
 @property (nonatomic) BOOL isAutoLoading;
 @property (nonatomic) BOOL isRefreshing;
+@property (nonatomic) BOOL isHitTheEnd;// 标记是否已经是最后一页
 @property (nonatomic) PullState pullState;
 
 - (void)tableViewDidScroll:(UIScrollView *)scrollView;
